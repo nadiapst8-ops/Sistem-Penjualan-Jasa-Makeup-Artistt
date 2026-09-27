@@ -1,0 +1,291 @@
+<html lang="id"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>from pathlib import Path
+
+html = r'''
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlowUp MUA - Sistem Akuntansi Jasa Makeup</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,Arial,sans-serif;background:#fff7fb;color:#352630}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+.sidebar{position:fixed;left:0;top:0;width:245px;height:100vh;background:#b94f82;color:white;padding:25px 16px;z-index:5}
+.logo{font-size:24px;font-weight:800;text-align:center;margin-bottom:5px}
+.logo-sub{text-align:center;font-size:12px;opacity:.85;margin-bottom:28px}
+.nav button{width:100%;padding:13px 15px;margin:4px 0;border-radius:12px;background:transparent;color:white;text-align:left;font-weight:600}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.18)}
+.main{margin-left:245px;padding:28px;min-height:100vh}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.top h1{font-size:27px}
+.top p{color:#8b717d;margin-top:4px}
+.date-badge{background:white;border:1px solid #f0d7e3;border-radius:12px;padding:11px 16px;font-size:13px}
+.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.card{background:white;border:1px solid #f1dce6;border-radius:17px;padding:20px;box-shadow:0 4px 14px rgba(120,60,90,.05)}
+.card .label{font-size:13px;color:#927985}.card .value{font-size:25px;font-weight:800;margin-top:8px;color:#a83e72}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.section{background:white;border:1px solid #f1dce6;border-radius:17px;padding:20px;margin-bottom:18px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.section h2{font-size:18px}
+.btn{padding:10px 15px;border-radius:10px;font-weight:700}
+.btn-primary{background:#b94f82;color:white}.btn-light{background:#fff0f6;color:#a43b70}
+.btn-danger{background:#ffe7ed;color:#c94a64}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#fff1f6;color:#77485e;text-align:left;padding:12px 10px}
+td{padding:12px 10px;border-bottom:1px solid #f3e5eb;vertical-align:middle}
+.badge{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
+.green{background:#e7f8ee;color:#23804c}.yellow{background:#fff5d9;color:#9b7414}.red{background:#ffe8ed;color:#bb4059}.pink{background:#ffe8f2;color:#a53c70}
+.progress{height:8px;background:#f2e2e9;border-radius:10px;overflow:hidden;margin-top:8px}.bar{height:100%;background:#d36b9a}
+.package-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+.package{border:1px solid #efd9e4;border-radius:15px;overflow:hidden;background:white}
+.package-top{background:linear-gradient(135deg,#c45587,#e78fb4);height:90px;color:white;padding:18px}
+.package-body{padding:16px}.package h3{margin-bottom:6px}.price{font-size:21px;font-weight:800;color:#a53c70;margin:10px 0}
+.package ul{padding-left:18px;color:#806c76;font-size:13px;line-height:1.8}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:#765965;margin-bottom:6px}
+.field input,.field select{width:100%;padding:11px;border:1px solid #e6ccd8;border-radius:10px;outline:none;background:white}
+.field input:focus,.field select:focus{border-color:#c75a8b}
+.full{grid-column:1/-1}
+.actions{display:flex;gap:7px}.actions button{padding:7px 10px;border-radius:8px;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(45,20,34,.42);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.modal.show{display:flex}.modal-box{background:white;width:min(650px,100%);border-radius:18px;padding:23px;max-height:90vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;margin-bottom:18px}.close{font-size:23px;background:none;color:#8d6d7b}
+.search{padding:10px 12px;border:1px solid #ead5df;border-radius:10px;width:230px}
+.empty{text-align:center;padding:28px;color:#9a818d}
+.stat-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f2e5ea}
+.stat-row:last-child{border:0}.profit{font-size:30px;font-weight:800;color:#b43e75}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.package-grid{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{position:relative;width:100%;height:auto}.main{margin-left:0;padding:16px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap}.cards,.package-grid,.form-grid{grid-template-columns:1fr}.top{align-items:flex-start;gap:10px;flex-direction:column}}
+</style>
+
+
+
+<aside class="sidebar">
+  <div class="logo">GlowUp MUA</div>
+  <div class="logo-sub">Sistem Akuntansi Jasa Makeup</div>
+  <div class="nav">
+    <button class="active" onclick="showPage('dashboard',this)">▣ Dashboard</button>
+    <button onclick="showPage('packages',this)">♡ Katalog Paket</button>
+    <button onclick="showPage('bookings',this)">▤ Booking &amp; Jadwal</button>
+    <button onclick="showPage('payments',this)">◆ Pembayaran</button>
+    <button onclick="showPage('expenses',this)">− Pengeluaran</button>
+    <button onclick="showPage('reports',this)">◈ Laporan</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="top">
+    <div><h1 id="pageTitle">Dashboard</h1><p>Kelola booking, pembayaran, dan keuangan jasa makeup.</p></div>
+    <div class="date-badge" id="today">Minggu, 27 September 2026</div>
+  </div>
+
+  <section id="dashboard" class="page active">
+    <div class="cards">
+      <div class="card"><div class="label">Total Booking</div><div class="value" id="dBooking">1</div></div>
+      <div class="card"><div class="label">Booking Belum Lunas</div><div class="value" id="dUnpaid">1</div></div>
+      <div class="card"><div class="label">Pendapatan</div><div class="value" id="dRevenue">Rp&nbsp;450.000</div></div>
+      <div class="card"><div class="label">Laba Bersih</div><div class="value" id="dProfit">Rp&nbsp;450.000</div></div>
+    </div>
+    <div class="grid2">
+      <div class="section">
+        <div class="section-head"><h2>Jadwal Makeup Terdekat</h2><button class="btn btn-light" onclick="showPage('bookings',document.querySelectorAll('.nav button')[2])">Lihat Semua</button></div>
+        <div id="upcoming"><div class="empty">Belum ada jadwal mendatang.</div></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>Ringkasan Keuangan</h2></div>
+        <div class="stat-row"><span>Total Tagihan</span><b id="dBill">Rp&nbsp;450.000</b></div>
+        <div class="stat-row"><span>Uang Diterima</span><b id="dPaid">Rp&nbsp;200.000</b></div>
+        <div class="stat-row"><span>Piutang</span><b id="dReceivable">Rp&nbsp;250.000</b></div>
+        <div class="stat-row"><span>Total Pengeluaran</span><b id="dExpense">Rp&nbsp;0</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="packages" class="page">
+    <div class="section">
+      <div class="section-head"><h2>Katalog Paket Makeup</h2><button class="btn btn-primary" onclick="openPackageModal()">+ Tambah Paket</button></div>
+      <div class="package-grid" id="packageList"><div class="package"><div class="package-top"><b>Makeup Wisuda</b><div style="font-size:12px;margin-top:5px">Paket Makeup</div></div><div class="package-body"><div class="price">Rp&nbsp;250.000</div><ul><li>Makeup wisuda</li><li>hairdo</li><li>touch up</li></ul><button class="btn btn-danger" style="margin-top:12px;width:100%" onclick="deletePackage(0)">Hapus Paket</button></div></div><div class="package"><div class="package-top"><b>Makeup Wedding</b><div style="font-size:12px;margin-top:5px">Paket Makeup</div></div><div class="package-body"><div class="price">Rp&nbsp;1.500.000</div><ul><li>Makeup pengantin</li><li>hairdo</li><li>touch up</li></ul><button class="btn btn-danger" style="margin-top:12px;width:100%" onclick="deletePackage(1)">Hapus Paket</button></div></div><div class="package"><div class="package-top"><b>Makeup Pentas</b><div style="font-size:12px;margin-top:5px">Paket Makeup</div></div><div class="package-body"><div class="price">Rp&nbsp;350.000</div><ul><li>Makeup panggung</li><li>hairdo sederhana</li></ul><button class="btn btn-danger" style="margin-top:12px;width:100%" onclick="deletePackage(2)">Hapus Paket</button></div></div><div class="package"><div class="package-top"><b>Makeup Lamaran</b><div style="font-size:12px;margin-top:5px">Paket Makeup</div></div><div class="package-body"><div class="price">Rp&nbsp;600.000</div><ul><li>Makeup lamaran</li><li>hairdo</li><li>touch up</li></ul><button class="btn btn-danger" style="margin-top:12px;width:100%" onclick="deletePackage(3)">Hapus Paket</button></div></div><div class="package"><div class="package-top"><b>Makeup Photoshoot</b><div style="font-size:12px;margin-top:5px">Paket Makeup</div></div><div class="package-body"><div class="price">Rp&nbsp;450.000</div><ul><li>Makeup photoshoot</li><li>hairdo</li></ul><button class="btn btn-danger" style="margin-top:12px;width:100%" onclick="deletePackage(4)">Hapus Paket</button></div></div><div class="package"><div class="package-top"><b>Makeup Party/Event</b><div style="font-size:12px;margin-top:5px">Paket Makeup</div></div><div class="package-body"><div class="price">Rp&nbsp;400.000</div><ul><li>Makeup event</li><li>simple hairdo</li></ul><button class="btn btn-danger" style="margin-top:12px;width:100%" onclick="deletePackage(5)">Hapus Paket</button></div></div></div>
+    </div>
+  </section>
+
+  <section id="bookings" class="page">
+    <div class="section">
+      <div class="section-head"><h2>Data Booking &amp; Jadwal</h2><div><input class="search" id="searchBooking" placeholder="Cari customer..." oninput="renderBookings()"><button class="btn btn-primary" onclick="openBookingModal()">+ Booking Baru</button></div></div>
+      <div style="overflow:auto"><table><thead><tr><th>Kode</th><th>Customer</th><th>Paket</th><th>Tanggal</th><th>Jam</th><th>Lokasi</th><th>Total</th><th>DP</th><th>Sisa</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="bookingTable"><tr><td><b>BK681862</b></td><td>nana<br><small>korean makeup</small></td><td>Makeup Photoshoot</td><td>2026-09-24</td><td>08:00</td><td>tembalang</td><td>Rp&nbsp;450.000</td><td>Rp&nbsp;200.000</td><td>Rp&nbsp;250.000</td><td><span class="badge yellow">DP</span></td><td><div class="actions"><button class="btn-light" onclick="openPayment(0)">Bayar</button><button class="btn-danger" onclick="deleteBooking(0)">Hapus</button></div></td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="payments" class="page">
+    <div class="section">
+      <div class="section-head"><h2>Catatan Pembayaran</h2></div>
+      <div style="overflow:auto"><table><thead><tr><th>Kode Booking</th><th>Customer</th><th>Total Tagihan</th><th>Sudah Dibayar</th><th>Sisa</th><th>Status</th><th>Update Bayar</th></tr></thead><tbody id="paymentTable"><tr><td>BK681862</td><td>nana</td><td>Rp&nbsp;450.000</td><td>Rp&nbsp;200.000</td><td>Rp&nbsp;250.000</td><td><span class="badge yellow">DP</span></td><td><button class="btn btn-light" onclick="openPayment(0)">Update</button></td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="expenses" class="page">
+    <div class="section">
+      <div class="section-head"><h2>Pengeluaran Operasional</h2><button class="btn btn-primary" onclick="openExpenseModal()">+ Tambah Pengeluaran</button></div>
+      <div style="overflow:auto"><table><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th><th>Aksi</th></tr></thead><tbody id="expenseTable"><tr><td colspan="5" class="empty">Belum ada pengeluaran.</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="reports" class="page">
+    <div class="cards">
+      <div class="card"><div class="label">Pendapatan Jasa</div><div class="value" id="rRevenue">Rp&nbsp;450.000</div></div>
+      <div class="card"><div class="label">Pengeluaran</div><div class="value" id="rExpense">Rp&nbsp;0</div></div>
+      <div class="card"><div class="label">Laba Bersih</div><div class="value" id="rProfit">Rp&nbsp;450.000</div></div>
+      <div class="card"><div class="label">Margin Laba</div><div class="value" id="rMargin">100.0%</div></div>
+    </div>
+    <div class="grid2">
+      <div class="section"><h2>Ringkasan Laporan</h2><div class="stat-row"><span>Jumlah Booking</span><b id="rBooking">1</b></div><div class="stat-row"><span>Booking Lunas</span><b id="rLunas">0</b></div><div class="stat-row"><span>Total Piutang</span><b id="rReceivable">Rp&nbsp;250.000</b></div></div>
+      <div class="section"><h2>Catatan</h2><p style="color:#806c76;line-height:1.7;margin-top:10px">Pendapatan dihitung dari nilai jasa booking. Laba bersih sederhana dihitung dari pendapatan dikurangi seluruh pengeluaran yang dicatat.</p></div>
+    </div>
+  </section>
+</main>
+
+<!-- BOOKING MODAL -->
+<div class="modal" id="bookingModal"><div class="modal-box">
+  <div class="modal-head"><h2>Booking Makeup Baru</h2><button class="close" onclick="closeModal('bookingModal')">×</button></div>
+  <form id="bookingForm"><div class="form-grid">
+    <div class="field"><label>Nama Customer</label><input id="bCustomer" required=""></div>
+    <div class="field"><label>Paket Makeup</label><select id="bPackage" required=""></select></div>
+    <div class="field"><label>Tanggal</label><input type="date" id="bDate" required=""></div>
+    <div class="field"><label>Jam</label><input type="time" id="bTime" required=""></div>
+    <div class="field"><label>Lokasi</label><input id="bLocation" placeholder="Contoh: Semarang"></div>
+    <div class="field"><label>DP / Pembayaran Awal</label><input type="number" id="bDP" min="0" value="0"></div>
+    <div class="field"><label>Status</label><select id="bStatus"><option>Booking</option><option>Confirmed</option><option>Selesai</option><option>Dibatalkan</option></select></div>
+    <div class="field full"><label>Catatan</label><input id="bNote" placeholder="Contoh: makeup soft glam, request hairdo..."></div>
+  </div><div style="margin-top:18px;text-align:right"><button type="button" class="btn btn-light" onclick="closeModal('bookingModal')">Batal</button> <button class="btn btn-primary">Simpan Booking</button></div></form>
+</div></div>
+
+<!-- PACKAGE MODAL -->
+<div class="modal" id="packageModal"><div class="modal-box">
+  <div class="modal-head"><h2>Tambah Paket Makeup</h2><button class="close" onclick="closeModal('packageModal')">×</button></div>
+  <form id="packageForm"><div class="form-grid">
+    <div class="field"><label>Nama Paket</label><input id="pName" required=""></div>
+    <div class="field"><label>Harga</label><input type="number" id="pPrice" min="0" required=""></div>
+    <div class="field full"><label>Fasilitas</label><input id="pFacilities" placeholder="Contoh: Makeup, hairdo, touch up"></div>
+  </div><div style="margin-top:18px;text-align:right"><button type="button" class="btn btn-light" onclick="closeModal('packageModal')">Batal</button> <button class="btn btn-primary">Simpan Paket</button></div></form>
+</div></div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal" id="paymentModal"><div class="modal-box">
+  <div class="modal-head"><h2>Update Pembayaran</h2><button class="close" onclick="closeModal('paymentModal')">×</button></div>
+  <form id="paymentForm"><input type="hidden" id="payIndex"><div class="form-grid">
+    <div class="field"><label>Customer</label><input id="payCustomer" disabled=""></div>
+    <div class="field"><label>Total Tagihan</label><input id="payTotal" disabled=""></div>
+    <div class="field"><label>Total Sudah Dibayar</label><input type="number" id="payAmount" min="0" required=""></div>
+    <div class="field"><label>Metode Pembayaran</label><select id="payMethod"><option>Transfer</option><option>Cash</option><option>QRIS</option></select></div>
+  </div><div style="margin-top:18px;text-align:right"><button class="btn btn-primary">Simpan Pembayaran</button></div></form>
+</div></div>
+
+<!-- EXPENSE MODAL -->
+<div class="modal" id="expenseModal"><div class="modal-box">
+  <div class="modal-head"><h2>Tambah Pengeluaran</h2><button class="close" onclick="closeModal('expenseModal')">×</button></div>
+  <form id="expenseForm"><div class="form-grid">
+    <div class="field"><label>Tanggal</label><input type="date" id="eDate" required=""></div>
+    <div class="field"><label>Kategori</label><select id="eCategory"><option>Makeup Supplies</option><option>Skincare</option><option>Hairdo</option><option>Transportasi</option><option>Peralatan</option><option>Lainnya</option></select></div>
+    <div class="field full"><label>Keterangan</label><input id="eDesc" required="" placeholder="Contoh: beli foundation dan setting spray"></div>
+    <div class="field"><label>Jumlah</label><input type="number" id="eAmount" min="0" required=""></div>
+  </div><div style="margin-top:18px;text-align:right"><button class="btn btn-primary">Simpan Pengeluaran</button></div></form>
+</div></div>
+
+<script>
+const rupiah=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0);
+const todayStr=()=>new Date().toISOString().slice(0,10);
+let packages=JSON.parse(localStorage.getItem('muaPackages'))||[
+ {id:1,name:'Makeup Wisuda',price:250000,facilities:'Makeup wisuda, hairdo, touch up'},
+ {id:2,name:'Makeup Wedding',price:1500000,facilities:'Makeup pengantin, hairdo, touch up'},
+ {id:3,name:'Makeup Pentas',price:350000,facilities:'Makeup panggung, hairdo sederhana'},
+ {id:4,name:'Makeup Lamaran',price:600000,facilities:'Makeup lamaran, hairdo, touch up'},
+ {id:5,name:'Makeup Photoshoot',price:450000,facilities:'Makeup photoshoot, hairdo'},
+ {id:6,name:'Makeup Party/Event',price:400000,facilities:'Makeup event, simple hairdo'}
+];
+let bookings=JSON.parse(localStorage.getItem('muaBookings'))||[];
+let expenses=JSON.parse(localStorage.getItem('muaExpenses'))||[];
+
+function save(){localStorage.setItem('muaPackages',JSON.stringify(packages));localStorage.setItem('muaBookings',JSON.stringify(bookings));localStorage.setItem('muaExpenses',JSON.stringify(expenses));}
+function showPage(id,btn){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');
+ const titles={dashboard:'Dashboard',packages:'Katalog Paket Makeup',bookings:'Booking & Jadwal',payments:'Pembayaran',expenses:'Pengeluaran',reports:'Laporan Keuangan'};
+ document.getElementById('pageTitle').textContent=titles[id];
+ renderAll();
+}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function openBookingModal(){
+ const s=document.getElementById('bPackage');s.innerHTML=packages.map(p=>`<option value="${p.id}">${p.name} - ${rupiah(p.price)}</option>`).join('');
+ document.getElementById('bDate').value=todayStr();document.getElementById('bDP').value=0;openModal('bookingModal');
+}
+function openPackageModal(){document.getElementById('packageForm').reset();openModal('packageModal')}
+function openExpenseModal(){document.getElementById('expenseForm').reset();document.getElementById('eDate').value=todayStr();openModal('expenseModal')}
+
+document.getElementById('bookingForm').onsubmit=e=>{
+ e.preventDefault();
+ const p=packages.find(x=>x.id==document.getElementById('bPackage').value);
+ const total=p?p.price:0,dp=Number(document.getElementById('bDP').value);
+ bookings.push({code:'BK'+Date.now().toString().slice(-6),customer:document.getElementById('bCustomer').value,packageId:p.id,date:document.getElementById('bDate').value,time:document.getElementById('bTime').value,location:document.getElementById('bLocation').value,total,paid:Math.min(dp,total),status:document.getElementById('bStatus').value,note:document.getElementById('bNote').value});
+ save();closeModal('bookingModal');e.target.reset();renderAll();alert('Booking berhasil disimpan.');
+};
+document.getElementById('packageForm').onsubmit=e=>{
+ e.preventDefault();packages.push({id:Date.now(),name:document.getElementById('pName').value,price:Number(document.getElementById('pPrice').value),facilities:document.getElementById('pFacilities').value||'Makeup sesuai paket'});save();closeModal('packageModal');renderAll();alert('Paket berhasil ditambahkan.');
+};
+document.getElementById('expenseForm').onsubmit=e=>{
+ e.preventDefault();expenses.push({date:document.getElementById('eDate').value,category:document.getElementById('eCategory').value,desc:document.getElementById('eDesc').value,amount:Number(document.getElementById('eAmount').value)});save();closeModal('expenseModal');renderAll();alert('Pengeluaran berhasil dicatat.');
+};
+document.getElementById('paymentForm').onsubmit=e=>{
+ e.preventDefault();let i=Number(document.getElementById('payIndex').value);let b=bookings[i];b.paid=Math.min(Number(document.getElementById('payAmount').value),b.total);if(b.paid>=b.total)b.status='Selesai';save();closeModal('paymentModal');renderAll();alert('Pembayaran berhasil diperbarui.');
+};
+
+function renderPackages(){
+ document.getElementById('packageList').innerHTML=packages.map((p,i)=>`<div class="package"><div class="package-top"><b>${p.name}</b><div style="font-size:12px;margin-top:5px">Paket Makeup</div></div><div class="package-body"><div class="price">${rupiah(p.price)}</div><ul>${p.facilities.split(',').map(x=>`<li>${x.trim()}</li>`).join('')}</ul><button class="btn btn-danger" style="margin-top:12px;width:100%" onclick="deletePackage(${i})">Hapus Paket</button></div></div>`).join('');
+}
+function renderBookings(){
+ const q=(document.getElementById('searchBooking')?.value||'').toLowerCase();
+ const arr=bookings.map((b,i)=>({...b,i})).filter(b=>b.customer.toLowerCase().includes(q)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ document.getElementById('bookingTable').innerHTML=arr.length?arr.map(b=>{
+ let p=packages.find(x=>x.id==b.packageId);let remain=b.total-b.paid;
+ return `<tr><td><b>${b.code}</b></td><td>${b.customer}<br><small>${b.note||''}</small></td><td>${p?p.name:'-'}</td><td>${b.date}</td><td>${b.time}</td><td>${b.location||'-'}</td><td>${rupiah(b.total)}</td><td>${rupiah(b.paid)}</td><td>${rupiah(remain)}</td><td><span class="badge ${remain<=0?'green':b.paid>0?'yellow':'red'}">${remain<=0?'Lunas':b.paid>0?'DP':'Belum Bayar'}</span></td><td><div class="actions"><button class="btn-light" onclick="openPayment(${b.i})">Bayar</button><button class="btn-danger" onclick="deleteBooking(${b.i})">Hapus</button></div></td></tr>`
+ }).join(''):`<tr><td colspan="11" class="empty">Belum ada data booking.</td></tr>`;
+}
+function renderPayments(){
+ document.getElementById('paymentTable').innerHTML=bookings.length?bookings.map((b,i)=>{let r=b.total-b.paid;return `<tr><td>${b.code}</td><td>${b.customer}</td><td>${rupiah(b.total)}</td><td>${rupiah(b.paid)}</td><td>${rupiah(r)}</td><td><span class="badge ${r<=0?'green':b.paid?'yellow':'red'}">${r<=0?'Lunas':b.paid?'DP':'Belum Bayar'}</span></td><td><button class="btn btn-light" onclick="openPayment(${i})">Update</button></td></tr>`}).join(''):`<tr><td colspan="7" class="empty">Belum ada transaksi pembayaran.</td></tr>`;
+}
+function renderExpenses(){
+ document.getElementById('expenseTable').innerHTML=expenses.length?expenses.map((e,i)=>`<tr><td>${e.date}</td><td><span class="badge pink">${e.category}</span></td><td>${e.desc}</td><td>${rupiah(e.amount)}</td><td><button class="btn btn-danger" onclick="deleteExpense(${i})">Hapus</button></td></tr>`).join(''):`<tr><td colspan="5" class="empty">Belum ada pengeluaran.</td></tr>`;
+}
+function renderDashboard(){
+ let revenue=bookings.reduce((s,b)=>s+b.total,0),paid=bookings.reduce((s,b)=>s+b.paid,0),expense=expenses.reduce((s,e)=>s+e.amount,0);
+ let receivable=revenue-paid,profit=revenue-expense;
+ document.getElementById('dBooking').textContent=bookings.length;
+ document.getElementById('dUnpaid').textContent=bookings.filter(b=>b.paid<b.total&&b.status!=='Dibatalkan').length;
+ document.getElementById('dRevenue').textContent=rupiah(revenue);document.getElementById('dProfit').textContent=rupiah(profit);
+ document.getElementById('dBill').textContent=rupiah(revenue);document.getElementById('dPaid').textContent=rupiah(paid);document.getElementById('dReceivable').textContent=rupiah(receivable);document.getElementById('dExpense').textContent=rupiah(expense);
+ let upcoming=bookings.filter(b=>b.date>=todayStr()&&b.status!=='Dibatalkan').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,5);
+ document.getElementById('upcoming').innerHTML=upcoming.length?upcoming.map(b=>`<div style="padding:11px 0;border-bottom:1px solid #f3e5eb;display:flex;justify-content:space-between"><div><b>${b.customer}</b><div style="font-size:12px;color:#907783">${b.date} • ${b.time} • ${b.location||'Lokasi belum diisi'}</div></div><span class="badge pink">${packages.find(p=>p.id==b.packageId)?.name||'-'}</span></div>`).join(''):'<div class="empty">Belum ada jadwal mendatang.</div>';
+}
+function renderReports(){
+ let revenue=bookings.reduce((s,b)=>s+b.total,0),expense=expenses.reduce((s,e)=>s+e.amount,0),profit=revenue-expense;
+ document.getElementById('rRevenue').textContent=rupiah(revenue);document.getElementById('rExpense').textContent=rupiah(expense);document.getElementById('rProfit').textContent=rupiah(profit);document.getElementById('rMargin').textContent=(revenue?((profit/revenue)*100).toFixed(1):0)+'%';
+ document.getElementById('rBooking').textContent=bookings.length;document.getElementById('rLunas').textContent=bookings.filter(b=>b.paid>=b.total).length;document.getElementById('rReceivable').textContent=rupiah(revenue-bookings.reduce((s,b)=>s+b.paid,0));
+}
+function openPayment(i){let b=bookings[i];document.getElementById('payIndex').value=i;document.getElementById('payCustomer').value=b.customer;document.getElementById('payTotal').value=rupiah(b.total);document.getElementById('payAmount').value=b.paid;openModal('paymentModal')}
+function deleteBooking(i){if(confirm('Hapus booking ini?')){bookings.splice(i,1);save();renderAll()}}
+function deletePackage(i){if(confirm('Hapus paket ini?')){packages.splice(i,1);save();renderAll()}}
+function deleteExpense(i){if(confirm('Hapus pengeluaran ini?')){expenses.splice(i,1);save();renderAll()}}
+function renderAll(){renderPackages();renderBookings();renderPayments();renderExpenses();renderDashboard();renderReports()}
+document.getElementById('today').textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+renderAll();
+</script>
+
+'''
+
+path=Path("/mnt/data/index.html")
+path.write_text(html, encoding="utf-8")
+print(f"File berhasil dibuat: {path}")
+</body></html>
